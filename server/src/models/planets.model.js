@@ -66,5 +66,9 @@ function loadPlanetsData(){
 
 module.exports = {
     loadPlanetsData,
-    planets: habitablePlanets,
+    getAllPlanets,
 };
+
+function getAllPlanets() {
+    return habitablePlanets;
+}
