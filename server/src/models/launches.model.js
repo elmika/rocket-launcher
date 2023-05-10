@@ -7,7 +7,7 @@ const launch = {
     mission: 'Kepler Exploration X',
     rocket: 'Explorer IS1',
     launchDate: new Date('December 27, 2030'),
-    destination: 'Kepler-442 b',
+    target: 'Kepler-442 b',
     customer: ['ZtM', 'NASA'],
     upcoming: true,
     success: true,
@@ -36,7 +36,7 @@ function missingPropertyForLaunchCreation(launch) {
     if(!launch.mission) { return true; }
     if(!launch.rocket) { return true; }
     if(!launch.launchDate) { return true; }
-    if(!launch.destination) { return true; }
+    if(!launch.target) { return true; }
 
     return false;
 }
