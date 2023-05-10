@@ -32,7 +32,26 @@ function addNewLaunch(launch){
     );
 }
 
+function missingPropertyForLaunchCreation(launch) {
+    if(!launch.mission) { return true; }
+    if(!launch.rocket) { return true; }
+    if(!launch.launchDate) { return true; }
+    if(!launch.destination) { return true; }
+
+    return false;
+}
+
+function isInvalidLaunchDate(launch) {
+    ld = new Date(launch.launchDate);
+    if(isNaN(ld)) {
+        return true;
+    }
+    return false;
+}
+
 module.exports = {
     getAllLaunches,
     addNewLaunch,
+    missingPropertyForLaunchCreation,
+    isInvalidLaunchDate,
 }
