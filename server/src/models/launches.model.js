@@ -19,6 +19,10 @@ function getAllLaunches() {
     return Array.from(launches.values());
 }
 
+function getLaunchById(launchId) {
+    return launches.get(launchId);
+}
+
 function addNewLaunch(launch){
     latestFlightNumber += 1;
     launches.set(
@@ -32,7 +36,20 @@ function addNewLaunch(launch){
     );
 }
 
-function missingPropertyForLaunchCreation(launch) {
+function abortLaunchById(launchId) {
+    launches.forEach( (value, key, map) => {
+        if(value.flightNumber === launchId) {
+            if( value.upcoming === true) {
+                value.upcoming = false;
+                value.success = false;
+                return true;
+            }
+        }
+    });
+    return false;
+}
+
+function isIncompleteLaunchCreation(launch) {
     if(!launch.mission) { return true; }
     if(!launch.rocket) { return true; }
     if(!launch.launchDate) { return true; }
@@ -49,9 +66,27 @@ function isInvalidLaunchDate(launch) {
     return false;
 }
 
+function isExistingLaunch(launchId) {
+    return launches.has(launchId);    
+}
+
+function isPlannedLaunch(launchId) {
+    return true;
+    launches.forEach( (value, key, map ) => {
+        if(value.flightNumber === launchId) {            
+            return value.isPlannedLaunch;
+        }
+    });
+    return false;
+}
+
 module.exports = {
     getAllLaunches,
     addNewLaunch,
-    missingPropertyForLaunchCreation,
+    getLaunchById,
+    abortLaunchById,
+    isIncompleteLaunchCreation,
     isInvalidLaunchDate,
+    isExistingLaunch,
+    isPlannedLaunch,
 }
