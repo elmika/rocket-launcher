@@ -1,0 +1,123 @@
+{
+	"info": {
+		"_postman_id": "d74df3ce-6c57-4bfe-82d1-54c9cb7a7558",
+		"name": "NASA API exercise",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "11033638"
+	},
+	"item": [
+		{
+			"name": "Get list of planets",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8000/planets",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8000",
+					"path": [
+						"planets"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get list of launches",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8000/launches",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8000",
+					"path": [
+						"launches"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get a launch",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8000/launches/100",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8000",
+					"path": [
+						"launches",
+						"100"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Create a launch",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"mission\": \"ZTM155\",\n    \"rocket\": \"ZTM Experimental IS1\",\n    \"target\": \"Kepler-186 f\",\n    \"launchDate\": \"January 17, 2030\"\n}"
+				},
+				"url": {
+					"raw": "http://localhost:8000/launches",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8000",
+					"path": [
+						"launches"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Abort a launch",
+			"request": {
+				"method": "DELETE",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "http://localhost:8000/launches/101",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8000",
+					"path": [
+						"launches",
+						"101"
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}

@@ -1,0 +1,74 @@
+openapi: 3.0.0
+info:
+  version: '1.0'
+  title: Course by ZTM for nodejs
+  description: ''
+paths:
+  /planets:
+    get:
+      summary: Get list of planets
+      responses:
+        '200':
+          description: OK
+  /launches:
+    get:
+      summary: Get list of launches
+      responses:
+        '200':
+          description: OK
+    post:
+      summary: Create a launch
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                mission:
+                  type: string
+                rocket:
+                  type: string
+                target:
+                  type: string
+                launchDate:
+                  type: string
+              required:
+                - mission
+                - rocket
+                - target
+                - launchDate
+      responses:
+        '200':
+          description: OK
+  /launches/{launchId}:
+    get:
+      summary: Get a launch
+      parameters:
+        - name: launchId
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: OK
+    delete:
+      summary: Abort a launch
+      parameters:
+        - name: launchId
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: OK
+components:
+  schemas:
+    Schema:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
