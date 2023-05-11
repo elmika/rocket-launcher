@@ -23,7 +23,7 @@ function httpAddNewLaunch(req, res) {
     }
     if(isInvalidLaunchDate(launch)) {
         return res.status(400).json({
-            error: 'Invalid launch date.',
+            error: 'Invalid launch date',
         });
     }
 
