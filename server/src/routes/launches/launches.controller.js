@@ -1,12 +1,10 @@
 const {
     getAllLaunches,
-    getLaunchById,
     scheduleNewLaunch,
     abortLaunchById,
     isIncompleteLaunchCreation,
     isInvalidLaunchDate, 
-    isExistingLaunch,
-    isPlannedLaunch,    
+    isExistingLaunch, 
 } = require('../../models/launches.model');
 
 async function httpGetAllLaunches(req, res) {
@@ -40,20 +38,27 @@ async function httpAddNewLaunch(req, res) {
     return res.status(201).json(launch); // Pending: add Location header            
 }
 
-function httpAbortLaunch(req, res) {        
+async function httpAbortLaunch(req, res) {        
     const launchId = Number(req.params.launchId);
-    if(!isExistingLaunch(launchId)) {
+    let launch = await isExistingLaunch(launchId);
+    if(!launch) {
         return res.status(404).json({
             error: `Unknown launch ${launchId}`
         });
     }
-    if(!isPlannedLaunch(launchId)) {
+    // if(!launch.upcoming) {
+    //     return res.status(400).json({
+    //         error: `Not a planned launch ${launchId}`
+    //     });
+    // }
+    try {
+        launch = await abortLaunchById(launchId);
+    }catch(err){
         return res.status(400).json({
-            error: `Not a planned launch ${launchId}`
-        });
+            error: `${err}`
+        });    
     }
-    launch = getLaunchById(launchId);
-    abortLaunchById(launchId);
+    
     return res.status(200).json(launch);
 }
 

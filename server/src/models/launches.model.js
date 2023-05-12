@@ -46,8 +46,8 @@ async function getLatestFlightNumber() {
     return latestLaunch.flightNumber;
 }
 
-function getLaunchById(launchId) {
-    return launches.get(launchId);
+async function getLaunchById(launchId) {
+    return await launches2.findOne({flightNumber: launchId});
 }
 
 async function scheduleNewLaunch(launch) {
@@ -61,17 +61,37 @@ async function scheduleNewLaunch(launch) {
     }));            
 }
 
-function abortLaunchById(launchId) {
-    launches.forEach( (value, key, map) => {
-        if(value.flightNumber === launchId) {
-            if( value.upcoming === true) {
-                value.upcoming = false;
-                value.success = false;
-                return true;
-            }
-        }
-    });
-    return false;
+/**
+ * 
+ * @param Launch Our launch domain object
+ * @returns Launch The aborted launch
+ * @throws error if inconsistent order
+ */
+function abortLaunch(launch) {
+    
+    if(!launch.upcoming) {
+        throw new Error('Cannot abort a launch that is not scheduled!');
+    }
+    
+    launch.upcoming = false;
+    launch.success = false;
+    
+    return launch;
+}
+
+/**
+ * 
+ * @param integer launchId 
+ * @returns nil
+ *  
+ */
+async function abortLaunchById(launchId) {
+    
+    let launch = await getLaunchById(launchId);
+    launch = abortLaunch(launch);
+    await saveLaunch(launch);
+
+    return launch;
 }
 
 function isIncompleteLaunchCreation(launch) {
@@ -91,18 +111,10 @@ function isInvalidLaunchDate(launch) {
     return false;
 }
 
-function isExistingLaunch(launchId) {
-    return launches.has(launchId);    
-}
-
-function isPlannedLaunch(launchId) {
-    return true;
-    launches.forEach( (value, key, map ) => {
-        if(value.flightNumber === launchId) {            
-            return value.isPlannedLaunch;
-        }
-    });
-    return false;
+async function isExistingLaunch(launchId) {
+    // return launches.has(launchId);
+    const launch = await getLaunchById(launchId);
+    return (!(!launch));
 }
 
 module.exports = {
@@ -113,5 +125,4 @@ module.exports = {
     isIncompleteLaunchCreation,
     isInvalidLaunchDate,
     isExistingLaunch,
-    isPlannedLaunch,
 }
