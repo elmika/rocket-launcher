@@ -4,7 +4,7 @@ const {
     abortLaunchById,
     isIncompleteLaunchCreation,
     isInvalidLaunchDate, 
-    isExistingLaunch, 
+    getLaunchById, 
 } = require('../../models/launches.model');
 
 async function httpGetAllLaunches(req, res) {
@@ -40,7 +40,7 @@ async function httpAddNewLaunch(req, res) {
 
 async function httpAbortLaunch(req, res) {        
     const launchId = Number(req.params.launchId);
-    let launch = await isExistingLaunch(launchId);
+    let launch = await getLaunchById(launchId);
     if(!launch) {
         return res.status(404).json({
             error: `Unknown launch ${launchId}`

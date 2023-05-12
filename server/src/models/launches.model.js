@@ -1,7 +1,5 @@
-const launches2 = require('./launches.mongo');
+const launches = require('./launches.mongo');
 const planets = require('./planets.mongo');
-
-const launches = new Map();
 
 const DEFAULT_FLIGHT_NUMBER = 100;
 
@@ -19,7 +17,7 @@ const launch = {
 saveLaunch(launch);
 
 async function getAllLaunches() {
-    return await launches2.find({}, {__v: 0, _id: 0});
+    return await launches.find({}, {__v: 0, _id: 0});
 }
 
 async function saveLaunch(launch) {
@@ -29,7 +27,7 @@ async function saveLaunch(launch) {
         throw new Error(`Cannot launch to unknown planet ${launch.target}`);
     }
 
-    await launches2.findOneAndUpdate({
+    await launches.findOneAndUpdate({
         flightNumber: launch.flightNumber,
     }, launch, {
         upsert: true,
@@ -37,7 +35,7 @@ async function saveLaunch(launch) {
 }
 
 async function getLatestFlightNumber() {
-    const latestLaunch = await launches2
+    const latestLaunch = await launches
         .findOne()
         .sort('-flightNumber');
     if(!latestLaunch) {
@@ -47,7 +45,7 @@ async function getLatestFlightNumber() {
 }
 
 async function getLaunchById(launchId) {
-    return await launches2.findOne({flightNumber: launchId});
+    return await launches.findOne({flightNumber: launchId});
 }
 
 async function scheduleNewLaunch(launch) {
@@ -111,12 +109,6 @@ function isInvalidLaunchDate(launch) {
     return false;
 }
 
-async function isExistingLaunch(launchId) {
-    // return launches.has(launchId);
-    const launch = await getLaunchById(launchId);
-    return (!(!launch));
-}
-
 module.exports = {
     getAllLaunches,
     scheduleNewLaunch,
@@ -124,5 +116,4 @@ module.exports = {
     abortLaunchById,
     isIncompleteLaunchCreation,
     isInvalidLaunchDate,
-    isExistingLaunch,
 }
