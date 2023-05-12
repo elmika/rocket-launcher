@@ -1,4 +1,5 @@
 const launches2 = require('./launches.mongo');
+const planets = require('./planets.mongo');
 
 const launches = new Map();
 
@@ -10,15 +11,30 @@ const launch = {
     rocket: 'Explorer IS1',
     launchDate: new Date('December 27, 2030'),
     target: 'Kepler-442 b',
-    customer: ['ZtM', 'NASA'],
+    customers: ['ZtM', 'NASA'],
     upcoming: true,
     success: true,
 }
 
-launches.set(launch.flightNumber, launch);
+saveLaunch(launch);
 
-function getAllLaunches() {
-    return Array.from(launches.values());
+async function getAllLaunches() {
+    return await launches2.find({}, {__v: 0, _id: 0});
+    // Array.from(launches.values());
+}
+
+async function saveLaunch(launch) {
+
+    planet = await planets.findOne({ keplerName: launch.target });
+    if(!planet) {
+        throw new Error(`Cannot launch to unknown planet ${launch.target}`);
+    }
+
+    await launches2.updateOne({
+        flightNumber: launch.flightNumber,
+    }, launch, {
+        upsert: true,
+    });
 }
 
 function getLaunchById(launchId) {
