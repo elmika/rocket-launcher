@@ -1,19 +1,19 @@
 const {
     getAllLaunches,
     getLaunchById,
-    addNewLaunch,
+    scheduleNewLaunch,
     abortLaunchById,
     isIncompleteLaunchCreation,
     isInvalidLaunchDate, 
     isExistingLaunch,
-    isPlannedLaunch,
+    isPlannedLaunch,    
 } = require('../../models/launches.model');
 
 async function httpGetAllLaunches(req, res) {
     return res.status(200).json(await getAllLaunches());
 }
 
-function httpAddNewLaunch(req, res) {
+async function httpAddNewLaunch(req, res) {
     const launch = req.body;
 
     if(isIncompleteLaunchCreation(launch)) {
@@ -28,7 +28,16 @@ function httpAddNewLaunch(req, res) {
     }
 
     launch.launchDate = new Date(launch.launchDate);
-    /* id = */ addNewLaunch(launch);
+    try {
+        await scheduleNewLaunch(launch);
+    } catch(err) {
+        console.log(`Could not schedule new launch: ${err}`);
+        return res.status(400).json({
+            error: `${err}`
+        }); // Pending: add Location header            
+    }
+
+    delete launch.$setOnInsert;
     return res.status(201).json(launch); // Pending: add Location header            
 }
 
@@ -51,6 +60,6 @@ function httpAbortLaunch(req, res) {
 
 module.exports = {
     httpGetAllLaunches,
-    httpAddNewLaunch,
+    httpAddNewLaunch,    
     httpAbortLaunch,
 };

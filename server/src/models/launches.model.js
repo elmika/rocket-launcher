@@ -3,7 +3,7 @@ const planets = require('./planets.mongo');
 
 const launches = new Map();
 
-let latestFlightNumber = 100;
+const DEFAULT_FLIGHT_NUMBER = 100;
 
 const launch = {
     flightNumber: 100,
@@ -20,7 +20,6 @@ saveLaunch(launch);
 
 async function getAllLaunches() {
     return await launches2.find({}, {__v: 0, _id: 0});
-    // Array.from(launches.values());
 }
 
 async function saveLaunch(launch) {
@@ -37,22 +36,43 @@ async function saveLaunch(launch) {
     });
 }
 
+async function getLatestFlightNumber() {
+    const latestLaunch = await launches2
+        .findOne()
+        .sort('-flightNumber');
+    if(!latestLaunch) {
+        return DEFAULT_FLIGHT_NUMBER;
+    }
+    return latestLaunch.flightNumber;
+}
+
 function getLaunchById(launchId) {
     return launches.get(launchId);
 }
 
-function addNewLaunch(launch){
-    latestFlightNumber += 1;
-    launches.set(
-        latestFlightNumber, 
-        Object.assign(launch, {
-            customer: ["Zero to Mastery", "NASA"],
-            flightNumber: latestFlightNumber,
-            upcoming: true,
-            success: true,
-        })
-    );
+async function scheduleNewLaunch(launch) {
+
+    const newFlightNumber = await getLatestFlightNumber() + 1;
+    await saveLaunch(Object.assign(launch, {
+        customers: ["Zero to Mastery", "NASA"],
+        flightNumber: newFlightNumber,
+        upcoming: true,
+        success: true,
+    }));            
 }
+
+// function addNewLaunch(launch){
+//     latestFlightNumber += 1;
+//     launches.set(
+//         latestFlightNumber, 
+//         Object.assign(launch, {
+//             customer: ["Zero to Mastery", "NASA"],
+//             flightNumber: latestFlightNumber,
+//             upcoming: true,
+//             success: true,
+//         })
+//     );
+// }
 
 function abortLaunchById(launchId) {
     launches.forEach( (value, key, map) => {
@@ -100,7 +120,7 @@ function isPlannedLaunch(launchId) {
 
 module.exports = {
     getAllLaunches,
-    addNewLaunch,
+    scheduleNewLaunch,
     getLaunchById,
     abortLaunchById,
     isIncompleteLaunchCreation,
