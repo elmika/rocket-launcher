@@ -37,7 +37,6 @@ async function httpAddNewLaunch(req, res) {
         }); // Pending: add Location header            
     }
 
-    delete launch.$setOnInsert;
     return res.status(201).json(launch); // Pending: add Location header            
 }
 

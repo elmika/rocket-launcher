@@ -29,7 +29,7 @@ async function saveLaunch(launch) {
         throw new Error(`Cannot launch to unknown planet ${launch.target}`);
     }
 
-    await launches2.updateOne({
+    await launches2.findOneAndUpdate({
         flightNumber: launch.flightNumber,
     }, launch, {
         upsert: true,
@@ -60,19 +60,6 @@ async function scheduleNewLaunch(launch) {
         success: true,
     }));            
 }
-
-// function addNewLaunch(launch){
-//     latestFlightNumber += 1;
-//     launches.set(
-//         latestFlightNumber, 
-//         Object.assign(launch, {
-//             customer: ["Zero to Mastery", "NASA"],
-//             flightNumber: latestFlightNumber,
-//             upcoming: true,
-//             success: true,
-//         })
-//     );
-// }
 
 function abortLaunchById(launchId) {
     launches.forEach( (value, key, map) => {
