@@ -1,19 +1,17 @@
 const {
     getAllLaunches,
-    getLaunchById,
-    addNewLaunch,
+    scheduleNewLaunch,
     abortLaunchById,
     isIncompleteLaunchCreation,
     isInvalidLaunchDate, 
-    isExistingLaunch,
-    isPlannedLaunch,
+    getLaunchById, 
 } = require('../../models/launches.model');
 
-function httpGetAllLaunches(req, res) {
-    return res.status(200).json(getAllLaunches());
+async function httpGetAllLaunches(req, res) {
+    return res.status(200).json(await getAllLaunches());
 }
 
-function httpAddNewLaunch(req, res) {
+async function httpAddNewLaunch(req, res) {
     const launch = req.body;
 
     if(isIncompleteLaunchCreation(launch)) {
@@ -28,29 +26,44 @@ function httpAddNewLaunch(req, res) {
     }
 
     launch.launchDate = new Date(launch.launchDate);
-    /* id = */ addNewLaunch(launch);
+    try {
+        await scheduleNewLaunch(launch);
+    } catch(err) {
+        console.log(`Could not schedule new launch: ${err}`);
+        return res.status(400).json({
+            error: `${err}`
+        }); // Pending: add Location header            
+    }
+
     return res.status(201).json(launch); // Pending: add Location header            
 }
 
-function httpAbortLaunch(req, res) {        
+async function httpAbortLaunch(req, res) {        
     const launchId = Number(req.params.launchId);
-    if(!isExistingLaunch(launchId)) {
+    let launch = await getLaunchById(launchId);
+    if(!launch) {
         return res.status(404).json({
             error: `Unknown launch ${launchId}`
         });
     }
-    if(!isPlannedLaunch(launchId)) {
+    // if(!launch.upcoming) {
+    //     return res.status(400).json({
+    //         error: `Not a planned launch ${launchId}`
+    //     });
+    // }
+    try {
+        launch = await abortLaunchById(launchId);
+    }catch(err){
         return res.status(400).json({
-            error: `Not a planned launch ${launchId}`
-        });
+            error: `${err}`
+        });    
     }
-    launch = getLaunchById(launchId);
-    abortLaunchById(launchId);
+    
     return res.status(200).json(launch);
 }
 
 module.exports = {
     httpGetAllLaunches,
-    httpAddNewLaunch,
+    httpAddNewLaunch,    
     httpAbortLaunch,
 };
