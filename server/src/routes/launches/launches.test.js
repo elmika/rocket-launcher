@@ -1,13 +1,20 @@
 const request = require('supertest');
 const app= require('../../app');
-const { connectMongo } = require('../../services/mongo');
+const { 
+    mongoConnect, 
+    mongoDisconnect 
+} = require('../../services/mongo');
 const { response } = require('../../app');
 
 
 describe('Launches API', () => {
 
     beforeAll( async () => {
-        await connectMongo();
+        await mongoConnect();
+    });
+
+    afterAll( async () => {
+        // await mongoDisconnect();
     });
 
     describe('Test GET /launches', () => {
@@ -23,6 +30,13 @@ describe('Launches API', () => {
         const completeLaunchData = {
             mission: 'USS Enterprise',
             rocket: 'NCC 1701-D',
+            target: 'Kepler-442 b',
+            launchDate: 'January 4, 2034'
+        }
+
+        const launchDataWithIncorrectPlanet = {
+            mission: 'USS Enterprise',
+            rocket: 'NCC 1701-D',
             target: 'Kepler-186-f',
             launchDate: 'January 4, 2034'
         }
@@ -30,19 +44,19 @@ describe('Launches API', () => {
         const launchDataWithoutDate = {
             mission: 'USS Enterprise',
             rocket: 'NCC 1701-D',
-            target: 'Kepler-186-f',
+            target: 'Kepler-442 b',
         }
     
         launchDataWithoutMission = {        
             rocket: 'NCC 1701-D',
-            target: 'Kepler-186-f',
+            target: 'Kepler-442 b',
             launchDate: 'January 4, 2034'
         }
     
         launchDataWithIncorrectDate = {
             mission: 'USS Enterprise',
             rocket: 'NCC 1701-D',
-            target: 'Kepler-186-f',
+            target: 'Kepler-442 b',
             launchDate: 'Hi there'
         }
     
@@ -91,6 +105,18 @@ describe('Launches API', () => {
     
             expect(response.body).toStrictEqual({
                 error: 'Invalid launch date',
+            });
+        });
+
+        test('It should catch invalid planets', async () => {
+            const response = await request(app)
+                .post('/launches')
+                .send(launchDataWithIncorrectPlanet)
+                .expect('Content-Type', /json/)
+                .expect(400)
+    
+            expect(response.body).toStrictEqual({
+                error: 'Error: Cannot launch to unknown planet Kepler-186-f',
             });
         });
         
