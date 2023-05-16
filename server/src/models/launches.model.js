@@ -34,6 +34,15 @@ async function saveLaunch(launch) {
     });
 }
 
+async function updateLaunch(launch) {
+    const aborted = await launches.updateOne({
+        flightNumber: launch.flightNumber,
+    }, launch);
+
+    // return says if operation was successful. Will return false if nothing has been modified.
+    return aborted.acknowledged && aborted.modifiedCount ===1 && aborted.matchedCount===1;
+}
+
 async function getLatestFlightNumber() {
     const latestLaunch = await launches
         .findOne()
@@ -45,7 +54,7 @@ async function getLatestFlightNumber() {
 }
 
 async function getLaunchById(launchId) {
-    return await launches.findOne({flightNumber: launchId});
+    return await launches.findOne({flightNumber: launchId}, {__v: 0, _id: 0});
 }
 
 async function scheduleNewLaunch(launch) {
@@ -87,7 +96,11 @@ async function abortLaunchById(launchId) {
     
     let launch = await getLaunchById(launchId);
     launch = abortLaunch(launch);
-    await saveLaunch(launch);
+    const isSuccessful = await updateLaunch(launch);
+
+    if(!isSuccessful) {
+        throw new Error("Error when persisting aborted launch (database error)");
+    }
 
     return launch;
 }
