@@ -102,8 +102,11 @@ function createLaunch(launchDoc) {
     return launch;
 }
 
-async function getAllLaunches() {
-    return await launchesDatabase.find({}, {__v: 0, _id: 0});
+async function getAllLaunches(skip, limit) {
+    return await launchesDatabase
+        .find({}, {__v: 0, _id: 0})
+        .skip(skip)
+        .limit(limit);
 }
 
 async function saveLaunch(launch) {
