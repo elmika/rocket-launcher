@@ -3,6 +3,8 @@ info:
   version: '1.0'
   title: Course by ZTM for nodejs
   description: ''
+servers:
+  - url: http://localhost:8000/v1
 paths:
   /planets:
     get:
