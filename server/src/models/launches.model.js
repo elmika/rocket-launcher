@@ -27,19 +27,6 @@ const SPACEX_LAUNCH_FILTER = {
     }
 };
 
-const launch = {
-    flightNumber: 100,
-    mission: 'Kepler Exploration X',
-    rocket: 'Explorer IS1',
-    launchDate: new Date('December 27, 2030'),
-    target: 'Kepler-442 b',
-    customers: ['ZtM', 'NASA'],
-    upcoming: true,
-    success: true,
-}
-
-saveLaunch(launch);
-
 async function isSpaceXLaunchesDataDownloaded() {
     const spaceXLaunch = await launchesDatabase.findOne({
         flightNumber: 1,
@@ -105,6 +92,7 @@ function createLaunch(launchDoc) {
 async function getAllLaunches(skip, limit) {
     return await launchesDatabase
         .find({}, {__v: 0, _id: 0})
+        .sort({ flightNumber: -1 })
         .skip(skip)
         .limit(limit);
 }
