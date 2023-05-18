@@ -23,3 +23,14 @@ Use postman to make requests directly to the REST API:
 ... Or find our POSTMAN collection in this folder: ```NASA-API.postman_collection.json```
 
 See also our openapi specification in `openapi.yaml`
+
+
+
+# Pending issues...
+
+> Our tests are still creating entries in our database each time we run them.
+> Business logic would need to be consolidated:
+    > We can still cancel a launch that is successful
+    > We can create launches in the past
+> Get a single launch is broken
+> Anything else?
