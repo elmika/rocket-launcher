@@ -5,16 +5,19 @@ const {
     mongoDisconnect 
 } = require('../../services/mongo');
 const { response } = require('../../app');
-
+const { 
+    loadPlanetsData,
+} = require('../../models/planets.model');
 
 describe('Launches API v1', () => {
 
     beforeAll( async () => {
         await mongoConnect();
+        await loadPlanetsData();
     });
 
     afterAll( async () => {
-        await mongoDisconnect();
+        await mongoDisconnect();        
     });
 
     describe('Test GET /v1/launches', () => {
